@@ -9,3 +9,5 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+ .auth-loading { min-height: 100vh; display: grid; place-items: center; font: 600 1rem Arial, sans-serif; }
+ .auth-error { color: #b42318; margin: 0.5rem 0; font-size: 0.9rem; }

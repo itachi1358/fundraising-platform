@@ -1,0 +1,20 @@
+.app-shell { min-height: 100vh; background: #f6f8fc; color: #172033; }
+.app-header { height: 72px; padding: 0 4vw; display: flex; align-items: center; gap: 2rem; background: #fff; border-bottom: 1px solid #e7eaf0; position: sticky; top: 0; z-index: 20; }
+.brand { align-items: center; color: #172b65; display: inline-flex; font-size: 1.15rem; font-weight: 800; gap: .55rem; text-decoration: none; white-space: nowrap; }
+.brand-mark { align-items: center; background: #1d4ed8; border-radius: 10px; color: #fff; display: inline-flex; font-family: Georgia, serif; font-size: 1.15rem; height: 30px; justify-content: center; width: 30px; }
+.primary-nav { align-items: center; display: flex; gap: .2rem; margin-right: auto; }
+.primary-nav a { border-radius: 7px; color: #4b5565; font-size: .93rem; font-weight: 600; padding: .55rem .75rem; text-decoration: none; }
+.primary-nav a:hover, .primary-nav a.active { background: #edf3ff; color: #1d4ed8; }
+.account-menu { position: relative; }
+.profile-trigger { align-items: center; background: transparent; border: 0; border-radius: 8px; color: #334155; cursor: pointer; display: flex; gap: .5rem; padding: .35rem; }
+.profile-trigger:hover { background: #f1f5f9; }
+.avatar { align-items: center; background: #dbeafe; border-radius: 50%; color: #1d4ed8; display: inline-flex; font-size: .75rem; font-weight: 800; height: 32px; justify-content: center; width: 32px; }
+.profile-name { font-size: .9rem; font-weight: 650; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-dropdown { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 12px 30px rgba(15,23,42,.15); min-width: 230px; overflow: hidden; position: absolute; right: 0; top: calc(100% + .6rem); }
+.account-summary { border-bottom: 1px solid #e8edf3; display: grid; gap: .2rem; padding: .85rem 1rem; }
+.account-summary strong { font-size: .9rem; }.account-summary span { color: #64748b; font-size: .78rem; overflow: hidden; text-overflow: ellipsis; }
+.profile-dropdown a, .profile-dropdown button { background: #fff; border: 0; color: #334155; cursor: pointer; display: block; font: inherit; font-size: .88rem; padding: .75rem 1rem; text-align: left; text-decoration: none; width: 100%; }
+.profile-dropdown a:hover, .profile-dropdown button:hover { background: #f8fafc; color: #1d4ed8; }
+.profile-dropdown button:disabled { cursor: wait; opacity: .65; }
+.app-content { min-height: calc(100vh - 72px); }
+@media (max-width: 760px) { .app-header { gap: .7rem; height: auto; min-height: 62px; padding: .7rem 1rem; }.primary-nav { gap: 0; overflow-x: auto; }.primary-nav a { font-size: .78rem; padding: .4rem; white-space: nowrap; }.profile-name, .profile-trigger > span:last-child { display: none; }.brand { font-size: 0; }.brand-mark { font-size: 1.15rem; } }

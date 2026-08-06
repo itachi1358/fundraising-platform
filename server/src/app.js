@@ -1,0 +1,36 @@
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
+import mongoSanitize from 'express-mongo-sanitize';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import authRoutes from './routes/authRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import campaignRoutes, { legacyCampaignRoutes, userCampaignRoutes } from './routes/campaignRoutes.js';
+import donationRoutes from './routes/donationRoutes.js';
+import { handleRazorpayWebhook } from './controllers/webhookController.js';
+
+const app = express();
+app.set('trust proxy', 1);
+app.use(helmet());
+app.use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true, methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] }));
+app.post('/api/payments/razorpay-webhook', express.raw({ type: 'application/json', limit: '100kb' }), handleRazorpayWebhook);
+app.use(express.json({ limit: '100kb' }));
+app.use(cookieParser());
+app.use(mongoSanitize());
+app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 20, standardHeaders: 'draft-7', legacyHeaders: false }));
+app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
+app.use('/api/auth', authRoutes);
+app.use('/api/campaigns', campaignRoutes);
+app.use('/api/campaign', legacyCampaignRoutes);
+app.use('/api', userCampaignRoutes);
+app.use('/api/donations', donationRoutes);
+app.use('/api/admin', adminRoutes);
+app.use((_req, res) => res.status(404).json({ message: 'Route not found' }));
+app.use((error, _req, res, _next) => {
+  console.error(error);
+  if (error.name === 'MulterError') return res.status(400).json({ message: 'Invalid upload. Use up to five documents and one banner image.' });
+  const status = error.statusCode || error.status || 500;
+  return res.status(status).json({ message: status >= 500 ? 'An unexpected server error occurred' : error.message });
+});
+export default app;

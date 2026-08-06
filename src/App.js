@@ -1,36 +1,40 @@
 import './App.css';
-import { BrowserRouter,Routes, Route, Router } from 'react-router-dom';
-import Donor from './Components/Donor.js';
-import Startingpage from './Components/Startingpage.js';
-import FundRaiser from './Components/FundRaiser.js';
-import Homepage from './Components/Homepage.js';
-import CreateCampaign from './Components/CreateCampaign.js';
-import CampaignCreators from './Components/CampaignCreators.js';
-import Donationpage from './Components/Donationpage.js';
-import SignUp from './Components/Singup.js';
-import DonationPage from './Components/Donationpage.js';
-import DonationPage2 from './Components/DonationPage2.js';
-import DonationPage3 from './Components/DonationPage3.js';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import Donor from './Components/Donor';
+import SignUp from './Components/Singup';
+import Homepage from './Components/Homepage';
+import CreateCampaign from './Components/CreateCampaign';
+import { AppLayout } from './Components/SiteHeader';
+import AdminRoute from './auth/AdminRoute';
+import ProtectedRoute from './auth/ProtectedRoute';
+import CampaignDetail from './pages/CampaignDetail';
+import AdminDashboard from './pages/AdminDashboard';
+import MyCampaigns from './pages/MyCampaigns';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
-  return (
-    <div className="App">
-        <BrowserRouter>
-        <Routes>
-          <Route path="" element={<Donor/>} />
-          <Route path="/donor_login" element={<Donor/>}/>
-          <Route path="/create_campaign" element={<CreateCampaign/>}/>
-          <Route path="/fundraiser_login" element={<FundRaiser></FundRaiser>}/>
-          <Route path="/homepage" element={<Homepage/>}/>
-          <Route path="/Campaign_Creators" element={<CampaignCreators/>}></Route>
-          <Route path="/donate" element={<Donationpage></Donationpage>}></Route>
-          <Route path="/signup" element={<SignUp></SignUp>}></Route>
-          <Route path="/donate-1" element={<DonationPage2/>}></Route>
-          <Route path="/donate-2" element={<DonationPage3/>}></Route>
-        </Routes>
-        </BrowserRouter>
-    </div>
-  );
+  return <div className="App"><BrowserRouter><Routes>
+    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/login" element={<Donor />} />
+    <Route path="/signup" element={<SignUp />} />
+    <Route path="/donor_login" element={<Navigate to="/login" replace />} />
+    <Route path="/fundraiser_login" element={<Navigate to="/login" replace />} />
+    <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+      <Route path="/dashboard" element={<Homepage />} />
+      <Route path="/campaigns/:id" element={<CampaignDetail />} />
+      <Route path="/create-campaign" element={<CreateCampaign />} />
+      <Route path="/my-campaigns" element={<MyCampaigns />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+    </Route>
+    <Route path="/homepage" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/create_campaign" element={<Navigate to="/create-campaign" replace />} />
+    <Route path="/Campaign_Creators" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/donate" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/donate-1" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/donate-2" element={<Navigate to="/dashboard" replace />} />
+    <Route path="*" element={<Navigate to="/dashboard" replace />} />
+  </Routes></BrowserRouter></div>;
 }
 
 export default App;

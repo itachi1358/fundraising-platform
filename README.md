@@ -1,70 +1,57 @@
-# Getting Started with Create React App
+# CareConnect
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+CareConnect is a secure fundraising platform for NIT Raipur students. Students can submit campaigns, discover verified campaigns, donate through Razorpay Test Mode, and track requests. Administrators review requests and manage the fundraising lifecycle.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- NIT Raipur email registration, bcrypt hashing, JWT HttpOnly-cookie sessions, protected routes, profile and logout controls.
+- Searchable, sortable and paginated active campaigns; responsive campaign pages with progress, days left, sharing, and donation history.
+- Campaign submission with optional Cloudinary banner/documents and pending-review workflow.
+- Admin workspace for approval, rejection, editing, stopping, resuming, deleting, and fundraising analytics.
+- Razorpay Standard Checkout in Test Mode, signed server-side verification, idempotent donation recording, and automatic campaign closure on goal completion.
+- Professional approval, rejection, stopped, and goal-achieved emails when SMTP is configured.
 
-### `npm start`
+## Run locally
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Install the client and API packages:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+npm install
+npm --prefix server install
+```
 
-### `npm test`
+Copy `server/.env.example` to `server/.env`, then configure `MONGODB_URI` and a long random `JWT_SECRET` at minimum. Start the API and client in separate terminals:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm run server
+npm start
+```
 
-### `npm run build`
+Open `http://localhost:3000`. The API health endpoint is `http://localhost:5000/api/health`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## First administrator
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Set `ADMIN_NAME`, `ADMIN_EMAIL`, and a 12+-character `ADMIN_PASSWORD` in `server/.env`, then run:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm --prefix server run seed:admin
+```
 
-### `npm run eject`
+Sign in with that account to access `/admin`. Public registration always creates the `user` role.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Optional integrations
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Razorpay live payments:** Use Live Mode keys (`rzp_live_…`) and set `NODE_ENV=production`, `RAZORPAY_LIVE_ENABLED=true`, and `RAZORPAY_WEBHOOK_SECRET`. In the Razorpay Live Dashboard, register `https://your-api-domain/api/payments/razorpay-webhook` and subscribe to `payment.captured` and `payment.failed`; enable automatic payment capture. Test keys (`rzp_test_…`) are also supported. Mock payments are disabled unless explicitly enabled for local development.
+- **Cloudinary:** Set the three Cloudinary variables to enable upload of banner images and supporting documents. URL-only banner images work without Cloudinary.
+- **Email:** Set SMTP settings to send approval, rejection, stopped, and goal-reached notifications. Missing SMTP configuration only skips sending email; it never blocks an admin action.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Deployment
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Deploy `server/` as a Render Node web service with `npm start`, populate its environment variables, and set `CLIENT_ORIGIN` to the Vercel client URL. Deploy the repository root to Vercel; set `REACT_APP_API_URL` to `https://your-api.onrender.com/api`. The included `vercel.json` keeps React routes working on refresh.
 
-## Learn More
+## Verification
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npm run build
+node --check server/src/app.js
+```
