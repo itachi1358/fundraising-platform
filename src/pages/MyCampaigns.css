@@ -1,2 +1,148 @@
-.my-page { margin: 0 auto; max-width: 1100px; padding: 2.5rem 1.25rem 4rem; }.my-heading { align-items: end; display: flex; justify-content: space-between; margin-bottom: 2.2rem; }.my-eyebrow { color: #2563eb; font-size: .75rem; font-weight: 800; letter-spacing: .1em; margin: 0 0 .35rem; text-transform: uppercase; }.my-heading h1 { color: #172554; font-size: 2rem; margin: 0 0 .45rem; }.my-heading p:not(.my-eyebrow) { color: #64748b; margin: 0; }.my-heading > a, .my-empty a { background: #1d4ed8; border-radius: 8px; color: #fff; font-size: .85rem; font-weight: 800; padding: .7rem .95rem; text-decoration: none; white-space: nowrap; }.my-section { margin-top: 2.1rem; }.my-section-title { margin-bottom: .9rem; }.my-section-title h2 { color: #1e293b; font-size: 1.2rem; margin: 0 0 .25rem; }.my-section-title p { color: #64748b; font-size: .86rem; margin: 0; }.my-request-list { background: #fff; border: 1px solid #e5eaf2; border-radius: 12px; padding: 0 1.2rem; }.my-request { align-items: center; border-bottom: 1px solid #edf1f5; display: flex; gap: 1rem; justify-content: space-between; padding: 1rem 0; }.my-request:last-child { border-bottom: 0; }.my-request-top { align-items: center; display: flex; gap: .6rem; }.my-request h3, .my-campaign-card h3 { color: #1e293b; font-size: .98rem; margin: 0; }.my-request p { color: #64748b; font-size: .8rem; margin: .4rem 0 0; }.my-request a, .my-campaign-card a { color: #2563eb; font-size: .82rem; font-weight: 800; text-decoration: none; white-space: nowrap; }.my-remarks { background: #f8fafc; border-radius: 6px; color: #475569 !important; padding: .45rem .6rem; }.my-status { border-radius: 99px; font-size: .68rem; font-weight: 800; padding: .25rem .5rem; text-transform: capitalize; }.my-status--pending { background: #fff7db; color: #a15c00; }.my-status--approved, .my-status--active { background: #dcfce7; color: #157a41; }.my-status--rejected, .my-status--stopped { background: #fee2e2; color: #b91c1c; }.my-status--closed { background: #e0e7ff; color: #3730a3; }.my-campaign-grid { display: grid; gap: 1rem; grid-template-columns: repeat(3, 1fr); }.my-campaign-card { background: #fff; border: 1px solid #e5eaf2; border-radius: 12px; display: grid; gap: .75rem; padding: 1.1rem; }.my-campaign-card > p { color: #64748b; font-size: .8rem; margin: -.4rem 0 0; }.my-request-top > span:last-child:not(.my-status) { color: #94a3b8; font-size: .72rem; }.my-progress { background: #e9eef5; border-radius: 99px; height: 7px; overflow: hidden; }.my-progress i { background: #2563eb; display: block; height: 100%; }.my-progress-copy { align-items: baseline; display: flex; gap: .35rem; }.my-progress-copy strong { color: #172554; font-size: .93rem; }.my-progress-copy span { color: #64748b; font-size: .75rem; }.my-empty { background: #fff; border: 1px dashed #cbd5e1; border-radius: 12px; color: #64748b; padding: 2rem; text-align: center; }.my-empty h3 { color: #334155; margin: 0 0 .4rem; }.my-empty p { font-size: .85rem; margin: 0 0 1rem; }.my-loading { color: #64748b; padding: 4rem; text-align: center; }.my-error { background: #fff1f2; border-radius: 8px; color: #be123c; margin-bottom: 1rem; padding: .8rem; }.my-error button { background: transparent; border: 0; color: inherit; cursor: pointer; font-weight: 800; margin-left: .7rem; text-decoration: underline; }
-@media (max-width: 760px) { .my-heading { align-items: flex-start; flex-direction: column; gap: 1rem; }.my-campaign-grid { grid-template-columns: 1fr; }.my-request { align-items: flex-start; flex-direction: column; }.my-page { padding: 1.5rem 1rem 3rem; } }
+/* ── My Campaigns ── */
+.my-page {
+  margin: 0 auto; max-width: 1120px;
+  padding: 36px var(--cc-content-px) 60px;
+}
+.my-heading {
+  align-items: flex-end; display: flex; justify-content: space-between;
+  margin-bottom: 36px; gap: 16px;
+}
+.my-eyebrow {
+  color: var(--cc-accent); font-size: 0.74rem; font-weight: 750;
+  letter-spacing: 0.1em; margin: 0 0 6px; text-transform: uppercase;
+}
+.my-heading h1 {
+  color: var(--cc-text); font-size: clamp(1.8rem, 3vw, 2.3rem);
+  font-weight: 800; letter-spacing: -0.04em; margin: 0 0 6px;
+}
+.my-heading p:not(.my-eyebrow) { color: var(--cc-text-secondary); margin: 0; }
+.my-heading > a, .my-empty a {
+  background: var(--cc-accent); border-radius: var(--cc-radius-sm);
+  color: #fff; font-size: 0.85rem; font-weight: 650;
+  padding: 11px 18px; text-decoration: none; white-space: nowrap;
+  transition: background 0.15s;
+}
+.my-heading > a:hover, .my-empty a:hover { background: var(--cc-accent-hover); }
+
+.my-section { margin-top: 36px; }
+.my-section-title { margin-bottom: 14px; }
+.my-section-title h2 {
+  color: var(--cc-text); font-size: 1.22rem; font-weight: 750;
+  letter-spacing: -0.02em; margin: 0 0 4px;
+}
+.my-section-title p { color: var(--cc-text-muted); font-size: 0.86rem; margin: 0; }
+
+/* ── Request List ── */
+.my-request-list {
+  background: var(--cc-white); border: 1px solid var(--cc-border);
+  border-radius: var(--cc-radius-lg); padding: 0 24px;
+  box-shadow: var(--cc-shadow-xs);
+}
+.my-request {
+  align-items: center; border-bottom: 1px solid var(--cc-border-light);
+  display: flex; gap: 16px; justify-content: space-between; padding: 18px 0;
+}
+.my-request:last-child { border-bottom: 0; }
+.my-request-top { align-items: center; display: flex; gap: 10px; }
+.my-request h3, .my-campaign-card h3 {
+  color: var(--cc-text); font-size: 0.98rem; font-weight: 650; margin: 0;
+}
+.my-request p { color: var(--cc-text-muted); font-size: 0.82rem; margin: 5px 0 0; }
+.my-request a, .my-campaign-card a {
+  color: var(--cc-accent); font-size: 0.84rem; font-weight: 650;
+  text-decoration: none; white-space: nowrap;
+}
+.my-request a:hover, .my-campaign-card a:hover { text-decoration: underline; }
+.my-remarks {
+  background: var(--cc-bg); border-radius: var(--cc-radius-sm);
+  color: var(--cc-text-secondary) !important; padding: 8px 12px;
+  font-size: 0.81rem !important; margin-top: 8px !important;
+}
+
+/* ── Status Badges ── */
+.my-status {
+  display: inline-flex; align-items: center;
+  border-radius: var(--cc-radius-full);
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.01em;
+  padding: 5px 11px; text-transform: capitalize; white-space: nowrap;
+  line-height: 1;
+}
+.my-status--pending { background: #fff7db; color: #a15c00; }
+.my-status--approved, .my-status--active { background: #dcfce7; color: #147a3e; }
+.my-status--rejected, .my-status--stopped { background: #fee2e2; color: #b91c1c; }
+.my-status--closed { background: #f3f4f6; color: #4b5563; }
+
+/* ── Campaign Cards Grid ── */
+.my-campaign-grid {
+  display: grid; gap: 20px; grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.my-campaign-card {
+  background: var(--cc-white); border: 1px solid var(--cc-border);
+  border-radius: var(--cc-radius-lg); padding: 22px;
+  box-shadow: var(--cc-shadow-xs);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.my-campaign-card:hover { border-color: var(--cc-green-200); box-shadow: var(--cc-shadow-md); }
+.my-campaign-card p { color: var(--cc-text-muted); font-size: 0.84rem; margin: 6px 0 12px; }
+.my-progress {
+  height: 7px; overflow: hidden; border-radius: var(--cc-radius-full);
+  background: var(--cc-green-100); margin: 12px 0;
+}
+.my-progress i {
+  display: block; height: 100%; border-radius: inherit;
+  background: linear-gradient(90deg, var(--cc-accent), #3cc099);
+  transition: width 0.6s ease;
+}
+.my-campaign-card .my-funding {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-top: 12px;
+}
+.my-campaign-card .my-funding strong {
+  color: var(--cc-text); font-size: 0.94rem; font-weight: 700;
+}
+.my-campaign-card .my-funding span { color: var(--cc-text-muted); font-size: 0.8rem; }
+.my-campaign-card > a {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 14px; padding: 8px 14px;
+  border-radius: var(--cc-radius-sm);
+  background: var(--cc-accent-light); color: var(--cc-accent);
+  font-size: 0.84rem; font-weight: 650; text-decoration: none;
+  transition: all 0.15s;
+}
+.my-campaign-card > a:hover {
+  background: var(--cc-accent); color: #fff; text-decoration: none;
+}
+
+/* ── Empty State ── */
+.my-empty {
+  text-align: center; padding: 52px 24px;
+  background: var(--cc-white); border: 1px solid var(--cc-border);
+  border-radius: var(--cc-radius-lg);
+}
+.my-empty h3 { color: var(--cc-text); font-size: 1.15rem; margin-bottom: 8px; }
+.my-empty p { color: var(--cc-text-muted); margin-bottom: 18px; }
+
+/* ── Error ── */
+.my-error {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; margin-bottom: 20px;
+  border-radius: var(--cc-radius-sm);
+  background: var(--cc-danger-light); border: 1px solid #fecaca;
+  color: var(--cc-danger); font-size: 0.86rem;
+}
+.my-error button {
+  margin-left: auto; padding: 7px 12px;
+  border: none; border-radius: var(--cc-radius-sm);
+  background: var(--cc-danger); color: #fff;
+  font-size: 0.8rem; font-weight: 650; cursor: pointer;
+}
+.my-loading {
+  text-align: center; padding: 80px 0; color: var(--cc-text-muted); font-size: 1rem;
+}
+
+@media (max-width: 760px) {
+  .my-heading { align-items: flex-start; flex-direction: column; }
+  .my-campaign-grid { grid-template-columns: 1fr; }
+  .my-request { align-items: flex-start; flex-direction: column; }
+  .my-page { padding: 24px 16px 40px; }
+}

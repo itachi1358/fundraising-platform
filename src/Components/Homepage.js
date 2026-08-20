@@ -210,7 +210,7 @@ export default function Homepage() {
       <footer className="cc-footer">
         <div className="cc-footer__inner">
           <div><Link to="/dashboard" className="cc-footer__brand">Care<span>Connect</span></Link><p>A trusted support network built for the NIT Raipur community.</p></div>
-          <div><strong>Quick links</strong><Link to="/create-campaign">Create a campaign</Link><a href="https://medical-resources.vercel.app" target="_blank" rel="noreferrer">Medical resources</a></div>
+          <div><strong>Quick links</strong><Link to="/create-campaign">Create a campaign</Link></div>
           <div><strong>Need urgent help?</strong><p>For immediate campus assistance, contact your department or the student welfare office.</p></div>
         </div>
       </footer>

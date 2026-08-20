@@ -1,4 +1,4 @@
-const placeholderSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700"><rect width="1200" height="700" fill="#e8f1ff"/><circle cx="960" cy="170" r="145" fill="#fff" opacity=".65"/><path d="M600 440C470 360 395 290 395 190c0-65 50-112 112-112 40 0 75 22 93 54 18-32 53-54 93-54 62 0 112 47 112 112 0 100-75 170-205 250Z" fill="#e15757"/><text x="600" y="570" text-anchor="middle" fill="#245146" font-family="Arial" font-size="46" font-weight="700">CareConnect</text></svg>';
+const placeholderSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#d5f4e7"/><stop offset="100%" stop-color="#edfaf5"/></linearGradient></defs><rect width="1200" height="700" fill="url(#bg)"/><circle cx="980" cy="180" r="160" fill="#fff" opacity=".5"/><circle cx="200" cy="550" r="100" fill="#fff" opacity=".35"/><path d="M600 440C470 360 395 290 395 190c0-65 50-112 112-112 40 0 75 22 93 54 18-32 53-54 93-54 62 0 112 47 112 112 0 100-75 170-205 250Z" fill="#1fa883" opacity=".85"/><text x="600" y="580" text-anchor="middle" fill="#0d493a" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="800">CareConnect</text></svg>';
 export const CAMPAIGN_PLACEHOLDER = `data:image/svg+xml,${encodeURIComponent(placeholderSvg)}`;
 
 export const CATEGORY_LABELS = {
@@ -20,7 +20,9 @@ export function normalizeCampaign(campaign = {}) {
     status: String(campaign.status || 'pending').toLowerCase(), creatorName, creator,
     image: typeof image === 'string' && image.trim() ? image : CAMPAIGN_PLACEHOLDER, createdAt: campaign.createdAt || campaign.requestedAt || null,
     donations: campaign.donations || campaign.donationHistory || [], donationCount: numberOrZero(campaign.donationCount ?? campaign.donorsCount ?? campaign.donations?.length),
-    documents: campaign.documents || campaign.supportingDocuments || []
+    documents: campaign.documents || campaign.supportingDocuments || [],
+    photos: campaign.photos || [],
+    publicDocuments: campaign.publicDocuments || []
   };
 }
 export function normaliseCampaignList(payload) { const root = payload?.data ?? payload ?? {}; const values = Array.isArray(root) ? root : root.campaigns || root.items || root.results || root.data || []; return Array.isArray(values) ? values.map(normalizeCampaign) : []; }

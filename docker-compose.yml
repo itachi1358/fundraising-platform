@@ -1,0 +1,87 @@
+services:
+  # ── Redis — caching & distributed rate limiting ──
+  redis:
+    image: redis:7-alpine
+    container_name: careconnect-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - careconnect
+
+  # ── MongoDB — primary database ──
+  mongo:
+    image: mongo:7
+    container_name: careconnect-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: careconnect
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - careconnect
+
+  # ── Express API server ──
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: careconnect-api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/.env
+    environment:
+      # Only override what Docker networking requires. All app secrets
+      # (Razorpay, mail, admin, JWT, mock payments) come from ./server/.env.
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/careconnect
+      - REDIS_URL=redis://redis:6379
+      - CLIENT_ORIGIN=http://localhost
+      - NIT_EMAIL_DOMAIN=it.nitrr.ac.in
+    depends_on:
+      redis:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    networks:
+      - careconnect
+
+  # ── React frontend (Nginx) ──
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: careconnect-client
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - careconnect
+
+volumes:
+  redis-data:
+  mongo-data:
+
+networks:
+  careconnect:
+    driver: bridge

@@ -1,1 +1,65 @@
-.profile-page { margin: 0 auto; max-width: 760px; padding: 3rem 1.25rem; }.profile-card { background: #fff; border: 1px solid #e5eaf2; border-radius: 16px; box-shadow: 0 4px 16px rgba(31,41,55,.05); padding: 2rem; }.profile-heading { align-items: center; border-bottom: 1px solid #e7edf5; display: flex; gap: 1rem; margin-bottom: 1.75rem; padding-bottom: 1.5rem; }.profile-heading h1 { color: #172554; font-size: 1.65rem; margin: .1rem 0 .35rem; }.profile-heading p { color: #64748b; margin: 0; }.eyebrow { color: #2563eb !important; font-size: .75rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }.profile-avatar { align-items: center; background: #dbeafe; border-radius: 50%; color: #1d4ed8; display: flex; font-size: 1.5rem; font-weight: 800; height: 58px; justify-content: center; width: 58px; }.profile-form { display: grid; gap: 1rem; }.profile-form label { color: #334155; display: grid; font-size: .9rem; font-weight: 700; gap: .45rem; }.profile-form input { border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; font-weight: 400; padding: .7rem .8rem; }.profile-form input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px #dbeafe; outline: 0; }.profile-form input:disabled { background: #f8fafc; color: #64748b; }.primary-action { background: #1d4ed8; border: 0; border-radius: 8px; color: #fff; cursor: pointer; font: 700 .9rem inherit; justify-self: start; margin-top: .25rem; padding: .72rem 1rem; }.primary-action:disabled { opacity: .65; }.form-error { color: #b42318; }.form-success { color: #147a3e; }
+/* ── Profile Page ── */
+.profile-page {
+  margin: 0 auto; max-width: 760px;
+  padding: 44px var(--cc-content-px) 60px;
+}
+.profile-card {
+  background: var(--cc-white); border: 1px solid var(--cc-border);
+  border-radius: var(--cc-radius-xl); box-shadow: var(--cc-shadow-sm);
+  padding: 36px 40px;
+  animation: cc-fadeUp 0.4s ease;
+}
+.profile-heading {
+  align-items: center; border-bottom: 1px solid var(--cc-border-light);
+  display: flex; gap: 18px; margin-bottom: 28px; padding-bottom: 24px;
+}
+.profile-heading h1 {
+  color: var(--cc-text); font-size: 1.7rem; font-weight: 800;
+  letter-spacing: -0.03em; margin: 3px 0 6px;
+}
+.profile-heading p { color: var(--cc-text-muted); margin: 0; }
+.eyebrow {
+  color: var(--cc-accent) !important; font-size: 0.74rem; font-weight: 750;
+  letter-spacing: 0.09em; text-transform: uppercase;
+}
+.profile-avatar {
+  align-items: center; background: linear-gradient(135deg, var(--cc-accent-light), #a7e8cf);
+  border-radius: 50%; color: var(--cc-accent); display: flex;
+  font-size: 1.5rem; font-weight: 800; height: 62px; justify-content: center; width: 62px;
+  flex-shrink: 0;
+}
+.profile-form { display: grid; gap: 18px; }
+.profile-form label {
+  color: var(--cc-text); display: grid; font-size: 0.88rem; font-weight: 650; gap: 7px;
+}
+.profile-form input {
+  border: 1.5px solid var(--cc-border); border-radius: var(--cc-radius-sm);
+  font: inherit; font-weight: 400; padding: 12px 14px; font-size: 0.94rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.profile-form input:focus {
+  border-color: var(--cc-accent); box-shadow: var(--cc-shadow-glow); outline: 0;
+}
+.profile-form input:disabled {
+  background: var(--cc-bg); color: var(--cc-text-muted); cursor: not-allowed;
+}
+.primary-action {
+  background: linear-gradient(135deg, var(--cc-accent), var(--cc-accent-hover));
+  border: 0; border-radius: var(--cc-radius-sm); color: #fff;
+  cursor: pointer; font: 700 0.92rem var(--cc-font);
+  justify-self: start; margin-top: 4px; padding: 12px 22px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(31, 168, 131, 0.25);
+}
+.primary-action:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(31, 168, 131, 0.35);
+}
+.primary-action:disabled { opacity: 0.6; cursor: wait; transform: none; }
+.form-error { color: var(--cc-danger); font-size: 0.86rem; font-weight: 550; }
+.form-success { color: #147a3e; font-size: 0.86rem; font-weight: 550; }
+
+@media (max-width: 500px) {
+  .profile-card { padding: 28px 22px; }
+  .profile-heading { gap: 14px; }
+}

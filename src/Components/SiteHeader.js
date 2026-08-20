@@ -52,7 +52,7 @@ export default function SiteHeader() {
           <NavLink to="/create-campaign" onClick={closeMenus}>Create campaign</NavLink>
           <NavLink to="/my-campaigns" onClick={closeMenus}>My campaigns</NavLink>
           {user?.role === 'admin' && <NavLink to="/admin" onClick={closeMenus}>Admin</NavLink>}
-          <a href="https://medical-resources.vercel.app" target="_blank" rel="noreferrer">Resources <span aria-hidden="true">↗</span></a>
+         
         </nav>
 
         <div className="cc-profile-menu">

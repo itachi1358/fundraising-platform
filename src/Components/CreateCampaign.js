@@ -25,11 +25,22 @@ function getErrorMessage(error) {
   return error.response?.data?.message || 'We could not submit your request. Please try again.';
 }
 
+function fileKey(file) { return `${file.name}-${file.size}-${file.lastModified}`; }
+
+function appendFiles(setFiles, selected, maxCount) {
+  setFiles((previous) => {
+    const known = new Set(previous.map(fileKey));
+    const fresh = selected.filter((file) => !known.has(fileKey(file)));
+    return [...previous, ...fresh].slice(0, maxCount);
+  });
+}
+
 export default function CreateCampaign() {
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
   const [bannerFile, setBannerFile] = useState(null);
   const [documents, setDocuments] = useState([]);
+  const [photos, setPhotos] = useState([]);
   const [previewUrl, setPreviewUrl] = useState('');
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
@@ -67,8 +78,15 @@ export default function CreateCampaign() {
   }
 
   function handleDocuments(event) {
-    const selected = Array.from(event.target.files || []).slice(0, 5);
-    setDocuments(selected);
+    const selected = Array.from(event.target.files || []);
+    appendFiles(setDocuments, selected, 5);
+    event.target.value = '';
+  }
+
+  function handlePhotos(event) {
+    const selected = Array.from(event.target.files || []);
+    appendFiles(setPhotos, selected, 6);
+    event.target.value = '';
   }
 
   function validate() {
@@ -97,12 +115,13 @@ export default function CreateCampaign() {
       bankDetails: form.payoutDetails.trim(),
       bannerImage: form.bannerImageUrl.trim()
     };
-    if (!bannerFile && documents.length === 0) return fields;
+    if (!bannerFile && documents.length === 0 && photos.length === 0) return fields;
 
     const payload = new FormData();
     Object.entries(fields).forEach(([key, value]) => { if (value !== '') payload.append(key, value); });
     if (bannerFile) payload.append('bannerImage', bannerFile);
     documents.forEach((file) => payload.append('documents', file));
+    photos.forEach((file) => payload.append('photos', file));
     return payload;
   }
 
@@ -187,7 +206,8 @@ export default function CreateCampaign() {
                 {errors.bannerImage && <small className="cc-field-error">{errors.bannerImage}</small>}
               </div>
               {(previewUrl || bannerFile) && <div className="cc-banner-preview cc-field--full"><img src={previewUrl || CAMPAIGN_PLACEHOLDER} alt="Campaign banner preview" onError={(event) => { event.currentTarget.src = CAMPAIGN_PLACEHOLDER; }} /><button type="button" onClick={() => { setBannerFile(null); setForm((previous) => ({ ...previous, bannerImageUrl: '' })); }}>Remove image</button></div>}
-              <div className="cc-file-field cc-field--full"><span>Supporting documents <span className="cc-optional">optional</span></span><label className="cc-file-drop"><input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" multiple onChange={handleDocuments} /><span aria-hidden="true">⊕</span><strong>{documents.length ? `${documents.length} file${documents.length > 1 ? 's' : ''} selected` : 'Add supporting documents'}</strong><small>Medical reports, fee receipts, or other relevant files · max. 5</small></label>{documents.length > 0 && <ul className="cc-file-list">{documents.map((file) => <li key={`${file.name}-${file.lastModified}`}>{file.name} <button type="button" onClick={() => setDocuments((files) => files.filter((item) => item !== file))} aria-label={`Remove ${file.name}`}>×</button></li>)}</ul>}</div>
+              <div className="cc-file-field cc-field--full"><span>Supporting documents <span className="cc-optional">optional</span></span><label className="cc-file-drop"><input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" multiple onChange={handleDocuments} /><span aria-hidden="true">⊕</span><strong>{documents.length ? `${documents.length} file${documents.length > 1 ? 's' : ''} selected` : 'Add supporting documents'}</strong><small>Medical reports, fee receipts, or other relevant files · max. 5</small></label>{documents.length > 0 && <ul className="cc-file-list">{documents.map((file) => <li key={fileKey(file)}>{file.name} <button type="button" onClick={() => setDocuments((files) => files.filter((item) => item !== file))} aria-label={`Remove ${file.name}`}>×</button></li>)}</ul>}</div>
+              <div className="cc-file-field cc-field--full"><span>Campaign photos <span className="cc-optional">optional</span></span><label className="cc-file-drop"><input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handlePhotos} /><span aria-hidden="true">⊕</span><strong>{photos.length ? `${photos.length} photo${photos.length > 1 ? 's' : ''} selected` : 'Add campaign photos'}</strong><small>Extra photos shown in the campaign gallery · max. 6</small></label>{photos.length > 0 && <ul className="cc-photo-grid">{photos.map((file) => <PhotoThumb key={fileKey(file)} file={file} onRemove={() => setPhotos((files) => files.filter((item) => item !== file))} />)}</ul>}</div>
             </div>
           </section>
 
@@ -209,5 +229,16 @@ export default function CreateCampaign() {
         </aside>
       </div>
     </main>
+  );
+}
+
+function PhotoThumb({ file, onRemove }) {
+  const url = useMemo(() => URL.createObjectURL(file), [file]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
+  return (
+    <li>
+      <img src={url} alt={file.name} />
+      <button type="button" onClick={onRemove} aria-label={`Remove ${file.name}`}>×</button>
+    </li>
   );
 }

@@ -57,7 +57,7 @@ export default function DonationCheckout({ campaign, onClose, onSuccess }) {
         name: 'CareConnect',
         description: `Donation to ${campaign.title}`,
         order_id: order.id,
-        theme: { color: '#1d4ed8' },
+        theme: { color: '#1fa883' },
         handler: (result) => confirmPayment(order, result.razorpay_payment_id, result.razorpay_signature),
         modal: { ondismiss: () => setLoading(false) }
       });
