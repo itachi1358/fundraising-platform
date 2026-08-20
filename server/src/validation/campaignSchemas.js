@@ -17,6 +17,7 @@ const campaignDataShape = {
   deadline: futureDate,
   bannerImage: optionalUrl,
   documents: z.array(documentUrl).max(10).default([]),
+  photos: z.array(documentUrl).max(10).default([]),
   upiId: optionalText(160),
   bankDetails: optionalText(1000),
   contactNumber: z.string().trim().regex(/^[+()\d\s-]{7,25}$/, 'Enter a valid contact number'),
@@ -34,6 +35,8 @@ export const campaignDataPatchSchema = z
     deadline: campaignDataShape.deadline.optional(),
     bannerImage: optionalUrl,
     documents: z.array(documentUrl).max(10).optional(),
+    photos: z.array(documentUrl).max(10).optional(),
+    publicDocuments: z.array(documentUrl).max(10).optional(),
     upiId: optionalText(160),
     bankDetails: optionalText(1000),
     contactNumber: campaignDataShape.contactNumber.optional(),
@@ -45,7 +48,8 @@ export const campaignDataPatchSchema = z
 export const adminApprovalSchema = z
   .object({
     adminRemarks: optionalText(1000),
-    campaignData: campaignDataPatchSchema.optional()
+    campaignData: campaignDataPatchSchema.optional(),
+    publicDocuments: z.array(documentUrl).max(10).optional()
   })
   .strict();
 

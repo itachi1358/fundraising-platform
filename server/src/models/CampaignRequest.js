@@ -11,6 +11,7 @@ const campaignDataSchema = new Schema(
     deadline: { type: Date, required: true },
     bannerImage: { type: String, trim: true, maxlength: 2048, default: undefined },
     documents: { type: [{ type: String, trim: true, maxlength: 2048 }], default: [] },
+    photos: { type: [{ type: String, trim: true, maxlength: 2048 }], default: [] },
     upiId: { type: String, trim: true, maxlength: 160 },
     bankDetails: { type: String, trim: true, maxlength: 1000 },
     contactNumber: { type: String, required: true, trim: true, maxlength: 25 },

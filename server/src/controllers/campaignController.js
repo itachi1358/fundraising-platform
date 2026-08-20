@@ -40,10 +40,16 @@ export async function prepareCampaignRequestAssets(req, _res, next) {
     const assets = await uploadCampaignAssets(req.files);
     if (assets.bannerImage) req.body.bannerImage = assets.bannerImage.url;
     if (assets.documents.length) req.body.documents = assets.documents.map((document) => document.url);
+    if (assets.photos.length) req.body.photos = assets.photos.map((photo) => photo.url);
     if (req.body.documents == null || req.body.documents === '') req.body.documents = [];
     if (typeof req.body.documents === 'string') {
       try { req.body.documents = JSON.parse(req.body.documents); }
       catch { req.body.documents = [req.body.documents]; }
+    }
+    if (req.body.photos == null || req.body.photos === '') req.body.photos = [];
+    if (typeof req.body.photos === 'string') {
+      try { req.body.photos = JSON.parse(req.body.photos); }
+      catch { req.body.photos = [req.body.photos]; }
     }
     next();
   } catch (error) {

@@ -4,6 +4,7 @@ import CampaignRequest from '../models/CampaignRequest.js';
 import User from '../models/User.js';
 import Donation from '../models/Donation.js';
 import { sendCampaignStatusEmail } from '../utils/email.js';
+import { invalidateCache } from '../middleware/cache.js';
 
 const campaignSortMap = {
   newest: { createdAt: -1 },
@@ -95,8 +96,16 @@ export async function approveRequest(req, res, next) {
       return res.status(422).json({ message: 'Campaign deadline must still be in the future before approval' });
     }
 
+    const documents = Array.isArray(campaignData.documents) ? campaignData.documents : [];
+    const publicDocuments = Array.isArray(req.body.publicDocuments) ? req.body.publicDocuments : [];
+    const invalidPublicDocuments = publicDocuments.filter((url) => !documents.includes(url));
+    if (invalidPublicDocuments.length > 0) {
+      return res.status(422).json({ message: 'Public documents must be chosen from the uploaded supporting documents' });
+    }
+
     const campaign = await Campaign.create({
       ...campaignData,
+      publicDocuments,
       creator: request.requestedBy,
       status: 'active',
       approvedBy: req.user._id,
@@ -131,6 +140,7 @@ export async function approveRequest(req, res, next) {
         type: 'approved', to: creator.email, recipientName: creator.name, campaignTitle: campaign.title
       });
     }
+    await invalidateCache('campaigns:*');
     return res.json({ message: 'Campaign request approved', request: approvedRequest, campaign });
   } catch (error) {
     next(error);
@@ -210,8 +220,16 @@ export async function updateCampaign(req, res, next) {
     if (req.body.goalAmount != null && req.body.goalAmount < campaign.raisedAmount) {
       return res.status(422).json({ message: 'Goal amount cannot be less than the amount already raised' });
     }
+    if (req.body.publicDocuments != null) {
+      const documents = Array.isArray(campaign.documents) ? campaign.documents : [];
+      const invalidPublicDocuments = req.body.publicDocuments.filter((url) => !documents.includes(url));
+      if (invalidPublicDocuments.length > 0) {
+        return res.status(422).json({ message: 'Public documents must be chosen from the uploaded supporting documents' });
+      }
+    }
     campaign.set(req.body);
     await campaign.save();
+    await invalidateCache('campaigns:*');
     return res.json({ message: 'Campaign updated', campaign });
   } catch (error) {
     next(error);

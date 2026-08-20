@@ -8,8 +8,8 @@ const documentMimeTypes = new Set(['application/pdf', 'image/jpeg', 'image/png',
 const storage = multer.memoryStorage();
 
 function campaignFileFilter(req, file, callback) {
-  const isBanner = file.fieldname === 'bannerImage';
-  const allowedTypes = isBanner ? imageMimeTypes : documentMimeTypes;
+  const isImage = file.fieldname === 'bannerImage' || file.fieldname === 'photos';
+  const allowedTypes = isImage ? imageMimeTypes : documentMimeTypes;
   if (!allowedTypes.has(file.mimetype)) {
     return callback(new multer.MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname));
   }
@@ -18,16 +18,17 @@ function campaignFileFilter(req, file, callback) {
 
 export const uploadCampaignFiles = multer({
   storage,
-  limits: { fileSize: MAX_DOCUMENT_SIZE, files: 6 },
+  limits: { fileSize: MAX_DOCUMENT_SIZE, files: 12 },
   fileFilter: campaignFileFilter
 }).fields([
   { name: 'bannerImage', maxCount: 1 },
-  { name: 'documents', maxCount: 5 }
+  { name: 'documents', maxCount: 5 },
+  { name: 'photos', maxCount: 6 }
 ]);
 
 export function ensureUploadSize(file) {
-  if (file.fieldname === 'bannerImage' && file.size > MAX_IMAGE_SIZE) {
-    const error = new Error('Banner image must be 5 MB or smaller');
+  if (['bannerImage', 'photos'].includes(file.fieldname) && file.size > MAX_IMAGE_SIZE) {
+    const error = new Error('Campaign images must be 5 MB or smaller');
     error.statusCode = 400;
     throw error;
   }

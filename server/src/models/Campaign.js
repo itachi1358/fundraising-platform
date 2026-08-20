@@ -23,6 +23,10 @@ const campaignSchema = new Schema(
     // Supporting documents and payout details are intentionally not selected
     // by public campaign queries.
     documents: { type: [{ type: String, trim: true, maxlength: 2048 }], default: [], select: false },
+    // Gallery photos shown on the public campaign page.
+    photos: { type: [{ type: String, trim: true, maxlength: 2048 }], default: [] },
+    // Admin-approved subset of `documents` that is safe to display publicly.
+    publicDocuments: { type: [{ type: String, trim: true, maxlength: 2048 }], default: [] },
     upiId: { type: String, trim: true, maxlength: 160, select: false },
     bankDetails: { type: String, trim: true, maxlength: 1000, select: false },
     contactNumber: { type: String, trim: true, maxlength: 25 },

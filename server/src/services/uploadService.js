@@ -21,16 +21,19 @@ function uploadBuffer(file, options) {
 export async function uploadCampaignAssets(files = {}) {
   const bannerFile = files.bannerImage?.[0];
   const documentFiles = files.documents || [];
-  if (!bannerFile && documentFiles.length === 0) return { bannerImage: null, documents: [] };
+  const photoFiles = files.photos || [];
+  if (!bannerFile && documentFiles.length === 0 && photoFiles.length === 0) {
+    return { bannerImage: null, documents: [], photos: [] };
+  }
   if (!isCloudinaryConfigured()) {
     const error = new Error('File uploads are unavailable until Cloudinary credentials are configured');
     error.statusCode = 503;
     throw error;
   }
 
-  for (const file of [bannerFile, ...documentFiles].filter(Boolean)) ensureUploadSize(file);
+  for (const file of [bannerFile, ...documentFiles, ...photoFiles].filter(Boolean)) ensureUploadSize(file);
 
-  const [bannerImage, documents] = await Promise.all([
+  const [bannerImage, documents, photos] = await Promise.all([
     bannerFile
       ? uploadBuffer(bannerFile, { folder: 'careconnect/campaigns/banners', resource_type: 'image' })
       : null,
@@ -41,8 +44,13 @@ export async function uploadCampaignAssets(files = {}) {
           resource_type: file.mimetype === 'application/pdf' ? 'raw' : 'image'
         })
       )
+    ),
+    Promise.all(
+      photoFiles.map((file) =>
+        uploadBuffer(file, { folder: 'careconnect/campaigns/photos', resource_type: 'image' })
+      )
     )
   ]);
 
-  return { bannerImage, documents };
+  return { bannerImage, documents, photos };
 }
