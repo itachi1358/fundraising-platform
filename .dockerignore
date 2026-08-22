@@ -6,3 +6,7 @@ build
 .gitignore
 *.md
 server
+# certbot creates root-owned dirs with private keys — never copy into the build
+certbot
+certbot/
+letsencrypt

@@ -37,6 +37,11 @@ function getTransport() {
   return transport;
 }
 
+/** True when SMTP env vars (MAIL_HOST/USER/PASS/FROM) are fully configured. */
+export function isEmailConfigured() {
+  return Boolean(mailConfiguration());
+}
+
 const templates = {
   approved: {
     subject: (campaignTitle) => `Your CareConnect campaign is approved: ${campaignTitle}`,
@@ -123,6 +128,58 @@ export async function sendCampaignStatusEmail({ type, to, recipientName, campaig
     return { sent: true, messageId: info.messageId };
   } catch (error) {
     console.error(`Unable to send ${type} email`, error.message);
+    return { sent: false, skipped: false, reason: 'Email delivery failed' };
+  }
+}
+
+/**
+ * Sends a signup email verification code. Never throws — callers inspect the
+ * returned { sent, skipped, reason } to decide how to respond.
+ */
+export async function sendOtpEmail({ to, recipientName, otp }) {
+  if (!to) return { sent: false, skipped: true, reason: 'No recipient address' };
+
+  const config = mailConfiguration();
+  const mailTransport = getTransport();
+  if (!config || !mailTransport) {
+    if (!didWarnAboutMissingConfiguration) {
+      console.warn('Email not sent: MAIL_HOST, MAIL_USER, MAIL_PASS, and MAIL_FROM are not fully configured.');
+      didWarnAboutMissingConfiguration = true;
+    }
+    return { sent: false, skipped: true, reason: 'Email is not configured' };
+  }
+
+  const safeName = escapeHtml(recipientName || 'there');
+  const safeOtp = escapeHtml(otp);
+
+  try {
+    const info = await mailTransport.sendMail({
+      from: config.from,
+      to,
+      subject: 'Your CareConnect verification code',
+      html: `<!doctype html>
+<html lang="en"><body style="margin:0;background:#f8fafc;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:32px 16px;background:#f8fafc;"><tr><td align="center">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(15,23,42,.08);">
+      <tr><td style="height:6px;background:#1fa883;"></td></tr>
+      <tr><td style="padding:36px 40px;">
+        <div style="font-size:14px;font-weight:700;letter-spacing:.08em;color:#1fa883;text-transform:uppercase;">CareConnect · NIT Raipur</div>
+        <h1 style="margin:18px 0 12px;font-size:26px;line-height:1.25;color:#0f172a;">Verify your email</h1>
+        <p style="margin:0;font-size:16px;line-height:1.65;color:#334155;">Hello ${safeName},</p>
+        <p style="margin:16px 0 0;font-size:16px;line-height:1.65;color:#334155;">Use the code below to activate your CareConnect account. It expires in 10 minutes.</p>
+        <div style="margin:24px 0 0;padding:18px;border-radius:12px;background:#f0fdf9;border:1px solid #a7e8cf;text-align:center;">
+          <div style="font-size:34px;font-weight:800;letter-spacing:.35em;color:#0f766e;">${safeOtp}</div>
+        </div>
+        <p style="margin:24px 0 0;font-size:14px;line-height:1.6;color:#64748b;">If you didn't create a CareConnect account, you can safely ignore this email.</p>
+        <p style="margin:28px 0 0;font-size:14px;line-height:1.6;color:#64748b;">Thank you for building a more caring NIT Raipur community.</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`
+    });
+    return { sent: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Unable to send OTP email', error.message);
     return { sent: false, skipped: false, reason: 'Email delivery failed' };
   }
 }

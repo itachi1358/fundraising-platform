@@ -55,6 +55,31 @@
   box-shadow: 0 8px 24px rgba(31, 168, 131, 0.4);
 }
 .signup-card__submit:disabled { opacity: 0.6; cursor: wait; transform: none; }
+.signup-card__info {
+  margin: 0 0 16px; padding: 10px 14px;
+  font-size: 0.88rem; line-height: 1.5; color: var(--cc-green-700);
+  background: #f0fdf9; border: 1px solid #a7e8cf; border-radius: var(--cc-radius-sm);
+}
+.signup-card__dev-otp {
+  margin-bottom: 16px; padding: 12px 14px;
+  font-size: 0.9rem; color: #7c3aed;
+  background: #f5f3ff; border: 1px dashed #c4b5fd; border-radius: var(--cc-radius-sm);
+}
+.signup-card__dev-otp strong { letter-spacing: 0.2em; font-size: 1.1rem; }
+.signup-card__resend {
+  margin-top: 16px; text-align: center; font-size: 0.88rem; color: var(--cc-text-muted);
+}
+.signup-card__resend button {
+  border: none; background: none; padding: 0;
+  color: var(--cc-accent); font-weight: 650; font-size: 0.88rem;
+  cursor: pointer; text-decoration: underline;
+}
+.signup-card__resend button:disabled { color: var(--cc-text-muted); cursor: not-allowed; }
+.signup-card__back {
+  border: none; background: none; padding: 0;
+  color: var(--cc-accent); font-weight: 650; font-size: 0.88rem;
+  cursor: pointer; text-decoration: underline;
+}
 .signup-card__footer {
   margin-top: 24px; text-align: center;
   color: var(--cc-text-muted); font-size: 0.88rem;

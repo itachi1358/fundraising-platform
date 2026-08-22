@@ -95,3 +95,12 @@ export const webhookLimiter = createLimiter({
   legacyHeaders: false,
   message: { status: 429, message: 'Too many webhook deliveries.' }
 });
+
+// ── OTP: code entry & resend (brute-force sensitive) ──
+export const otpLimiter = createLimiter({
+  windowMs: 15 * 60 * 1000,  // 15 minutes
+  limit: 10,                  // 10 verify/resend attempts per window
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { status: 429, message: 'Too many verification attempts. Please try again later.' }
+});

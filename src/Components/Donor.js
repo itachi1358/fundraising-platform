@@ -40,8 +40,8 @@ export default function Login() {
           </div>
           <form onSubmit={handleSubmit}>
             <div className="login-card__field">
-              <label htmlFor="email">NIT Raipur Email</label>
-              <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder="you@nitrr.ac.in" required />
+              <label htmlFor="email">Email</label>
+              <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder="Your Email" required />
             </div>
             <div className="login-card__field">
               <label htmlFor="password">Password</label>
