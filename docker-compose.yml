@@ -69,6 +69,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: /api
     container_name: careconnect-client
     restart: unless-stopped
     ports:

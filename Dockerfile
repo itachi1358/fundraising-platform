@@ -10,6 +10,12 @@ RUN npm ci --legacy-peer-deps
 
 # Copy source and build
 COPY . .
+# REACT_APP_API_URL is baked into the JS bundle at build time. Defaulting to
+# "/api" makes the browser call same-origin URLs, which nginx.conf proxies to
+# the api container (no CORS, works from any host). Override via build arg if
+# the API lives on a separate domain (e.g. --build-arg REACT_APP_API_URL=https://api.example.com/api).
+ARG REACT_APP_API_URL=/api
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
 RUN npm run build
 
 # Stage 2: Serve with Nginx
