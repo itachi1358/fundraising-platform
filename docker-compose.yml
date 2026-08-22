@@ -54,7 +54,7 @@ services:
       - PORT=5000
       - MONGODB_URI=mongodb://mongo:27017/careconnect
       - REDIS_URL=redis://redis:6379
-      - CLIENT_ORIGIN=http://localhost
+      - CLIENT_ORIGIN=http://careconnect.mrmay.in
       - NIT_EMAIL_DOMAIN=it.nitrr.ac.in
     depends_on:
       redis:
