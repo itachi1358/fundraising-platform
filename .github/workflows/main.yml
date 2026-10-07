@@ -1,0 +1,107 @@
+# CareConnect CI/CD
+# Save this file in the repo as:  .github/workflows/deploy.yml
+#
+# What it does
+#   Every push and pull request to main: installs the API, syntax-checks it,
+#   and builds both Docker images, so a broken build never reaches the server.
+#   Every push to main (after that passes): SSHes into the EC2 box, pulls main,
+#   rebuilds the Compose stack, and fails the run if /api/health does not come up.
+#
+# Repo settings needed (Settings > Secrets and variables > Actions)
+#   Secrets:   EC2_HOST     public IP or DNS name of the EC2 instance
+#              EC2_USER     SSH user (ubuntu on Ubuntu AMIs, ec2-user on Amazon Linux)
+#              EC2_SSH_KEY  full contents of the private key (.pem) for that user
+#   Variable:  EC2_APP_DIR  folder of the repo on the server, only if it is not
+#                           ~/fundraising-platform
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never run two deploys at once; a newer push replaces an older queued run.
+concurrency:
+  group: careconnect-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install API dependencies
+        working-directory: server
+        run: npm ci --legacy-peer-deps
+
+      - name: Syntax-check every API source file
+        working-directory: server
+        run: find src -name '*.js' -print0 | xargs -0 -n1 node --check
+
+      - name: Build API image
+        run: docker build -t careconnect-api ./server
+
+      - name: Build client image (React build + Nginx)
+        run: docker build -t careconnect-client --build-arg REACT_APP_API_URL=/api .
+
+  deploy:
+    name: Deploy to EC2
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+      APP_DIR: ${{ vars.EC2_APP_DIR || 'fundraising-platform' }}
+    steps:
+      - name: Configure SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
+
+      - name: Pull, rebuild, and health-check on the server
+        run: |
+          ssh -i ~/.ssh/deploy_key "$EC2_USER@$EC2_HOST" "APP_DIR='$APP_DIR' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$APP_DIR"
+
+          # server/.env is git-ignored, so it survives the reset.
+          git fetch --prune origin main
+          git reset --hard origin/main
+
+          docker compose up -d --build --remove-orphans
+          docker image prune -f
+
+          # Nginx proxies /api/ to the API container; wait up to ~2.5 minutes.
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://localhost/api/health > /dev/null; then
+              echo "Deploy healthy after attempt $attempt"
+              exit 0
+            fi
+            sleep 5
+          done
+
+          echo "Health check failed"
+          docker compose ps
+          docker compose logs --tail=50 api
+          exit 1
+          REMOTE
